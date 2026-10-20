@@ -37,3 +37,10 @@ jobs:
         run: |
           sleep 5
           docker ps
+
+      - name: Teste banco efêmero
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          sleep 10
+          docker exec meu-container-db psql -U postgres -c "SELECT * FROM mensagens;" || echo "Tabela não existe: o banco nasceu vazio"
+          docker exec meu-container-db psql -U postgres -c "CREATE TABLE mensagens (id SERIAL PRIMARY KEY, texto TEXT); INSERT INTO mensagens (texto) VALUES ('teste');"
