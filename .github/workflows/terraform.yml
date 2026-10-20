@@ -37,6 +37,7 @@ jobs:
         run: |
           sleep 5
           docker ps
+          curl -s http://localhost:8080 | grep "Atualizado via pipeline"
 
       - name: Teste banco efêmero
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
