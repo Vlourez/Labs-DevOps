@@ -50,6 +50,9 @@ resource "docker_container" "db" {
     volume_name    = docker_volume.db_data.name
     container_path = "/var/lib/postgresql/data"
   }
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
 }
 
 resource "docker_network" "monitoring" {
@@ -113,6 +116,22 @@ resource "docker_container" "prometheus" {
   volumes {
     host_path      = "${path.cwd}/prometheus.yml"
     container_path = "/etc/prometheus/prometheus.yml"
+  }
+  networks_advanced {
+    name = docker_network.monitoring.name
+  }
+}
+
+resource "docker_image" "grafana" {
+  name = "grafana/grafana:latest"
+}
+
+resource "docker_container" "grafana" {
+  name  = "grafana"
+  image = docker_image.grafana.image_id
+  ports {
+    internal = 3000
+    external = 3000
   }
   networks_advanced {
     name = docker_network.monitoring.name
